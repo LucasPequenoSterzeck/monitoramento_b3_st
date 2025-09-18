@@ -2,6 +2,8 @@
 __pycache__/
 *.py[codz]
 *$py.class
+coletor-dados\venv
+model-ml\venv
 
 # C extensions
 *.so

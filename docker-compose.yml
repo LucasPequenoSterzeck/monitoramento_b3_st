@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  coletor-de-dados:
+    container_name: coletor_de_dados_b3
+    build: 
+      context: ./coletor-dados
+    command: python coletor.py
+    restart: "no"
+    depends_on:
+      - database
+
+  database:
+    image: postgres:13
+    container_name: postgres_db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=b3_data
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  modelo-ml:
+    container_name: modelo_ml_b3
+    build:
+      context: ./modelo-ml
+    command: python predict.py
+    restart: "no"
+    # Você pode passar o ticker como um argumento para o script aqui
+    # command: python predict.py VALE3
+    volumes:
+      - ./modelo-ml/modelos:/app/modelos
+    depends_on:
+      - coletor-de-dados # Opcional, para garantir que o coletor rode primeiro
+
+volumes:
+  pg_data:
